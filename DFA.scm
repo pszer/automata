@@ -74,6 +74,18 @@
 (define (dfa-finish auto)
 	(car (cddddr auto)))
 
+(define (dfa-display auto)
+	(display "States   Q : ") (display (dfa-states auto))
+	(newline)
+	(display "Alphabet Σ : ") (display (dfa-alphabet auto))
+	(newline)
+	(display "Function δ : ") (display (dfa-transition auto))
+	(newline)
+	(display "Start    q : ") (display (dfa-start auto))
+	(newline)
+	(display "Finish   F : ") (display (dfa-finish auto))
+	(newline))
+
 (define (trans-make state char next)
 	(list state char next))
 (define (trans-state t)
