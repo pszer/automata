@@ -84,15 +84,15 @@
 	(caddr t))
 
 (define (dfa-compute automata string)
+	(define (state-next trans curr-state char)
+		(cond
+			((null? trans)
+				(error "transition doesn't exist for state and character" curr-state char))
+			((and (equal? (trans-state (car trans)) curr-state)
+			      (equal? (trans-char  (car trans)) char))
+				(trans-next (car trans)))
+			(else (state-next (cdr trans) curr-state char))))
 	(define (compute dfa state str)
-		(define (state-next trans curr-state char)
-			(cond
-				((null? trans)
-					(error "transition doesn't exist for state and character" curr-state char))
-				((and (equal? (trans-state (car trans)) curr-state)
-				      (equal? (trans-char  (car trans)) char))
-					(trans-next (car trans)))
-				(else (state-next (cdr trans) curr-state char))))
 		(if (null? str)
 			(is-element? state (dfa-finish dfa)) ; returns #t/#f if state is accept state.
 			(compute dfa
