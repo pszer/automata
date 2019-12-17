@@ -21,7 +21,17 @@
 ;;; F are the accept states. F ⊆ Q.
 ;;;
 ;;; Formal definition of computation with a DFA is as follows
-;;; If D is a DFA, D is said to accept an input string 'w0, w1, w2, ... , wn'
+;;; If D is a DFA, D is said to accept an input string 'w1, w2, ... , wn'
+;;; if there exists a set of states 'r0, r1, r2, ..., rn' where
+;;;  1. r0     = s (the start state).
+;;;  2. rn     ∈ F (is an accept state).
+;;;  3. r(i+1) = δ(ri, w(i+1)) (states follow the transition function).
+;;;
+;;; In practice, you start with the state of s, you read the first character
+;;; in the string (w1) and get a new state r1 = δ(s,w1) . You then get a new
+;;; state r2 = δ(r1,w2), you repeat this process until the end of the string
+;;; and then if the final state is an accept state you accept the string.
+;;;
 
 ;;; recognises if two numbers/symbols/lists of symbols or numbers are equal.
 (define (equal? a b)
@@ -76,7 +86,16 @@
 	(cadddr auto))
 (define (dfa-finish auto)
 	(car (cddddr auto)))
-
+(define (dfa-next-state dfa curr-state char)
+	(define (next-state trans curr-state char)
+		(cond
+			((null? trans)
+				(error "transition doesn't exist for state and character" curr-state char))
+			((and (equal? (trans-state (car trans)) curr-state)
+			      (equal? (trans-char  (car trans)) char))
+				(trans-next (car trans)))
+			(else (next-state (cdr trans) curr-state char))))
+	(next-state (dfa-transition dfa) curr-state char))
 (define (dfa-display auto)
 	(display "States   Q : ") (display (dfa-states auto))
 	(newline)
@@ -99,18 +118,10 @@
 	(caddr t))
 
 (define (dfa-compute automata string)
-	(define (state-next trans curr-state char)
-		(cond
-			((null? trans)
-				(error "transition doesn't exist for state and character" curr-state char))
-			((and (equal? (trans-state (car trans)) curr-state)
-			      (equal? (trans-char  (car trans)) char))
-				(trans-next (car trans)))
-			(else (state-next (cdr trans) curr-state char))))
 	(define (compute dfa state str)
 		(if (null? str)
 			(is-element? state (dfa-finish dfa)) ; returns #t/#f if state is accept state.
 			(compute dfa
-			         (state-next (dfa-transition dfa) state (car str))
+			         (dfa-next-state dfa state (car str))
 			         (cdr str))))
 	(compute automata (dfa-start automata) string))
