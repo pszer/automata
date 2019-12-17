@@ -19,6 +19,9 @@
 ;;; s is the starting state. s ∈ Q.
 ;;;
 ;;; F are the accept states. F ⊆ Q.
+;;;
+;;; Formal definition of computation with a DFA is as follows
+;;; If D is a DFA, D is said to accept an input string 'w0, w1, w2, ... , wn'
 
 ;;; recognises if two numbers/symbols/lists of symbols or numbers are equal.
 (define (equal? a b)
