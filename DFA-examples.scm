@@ -79,7 +79,7 @@
 ;;; successive character of 'sub' is read then the state goes back to 0.
 ;;; If |sub| successive characters of sub have been read, it means sub
 ;;; is a substring in the input string, so the state of the automata
-;;; becomes forever stuck in an accept state ().
+;;; becomes forever stuck in an accept state (|sub|).
 ;;;
 (define (substring-dfa alphabet sub)
 	(define (make-states)
