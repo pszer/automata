@@ -176,3 +176,25 @@
 			         ;(nfa-next-state nfa states (car str))
 			         (cdr str)))))
 	(compute automata (list (nfa-start automata)) string))
+
+
+;;; Doesn't work if n1 and n2 have states
+;;; that are the same.
+(define (nfa-concatenate n1 n2)
+	(define (create-concatenate-trans)
+		(define (iter finish result)
+			(if (null? finish)
+				result
+				(iter (cdr finish)
+				      (cons (trans-make (car finish)
+					                 'empty
+					                 (nfa-start n2))
+				             result))))
+		(iter (nfa-finish n1) '()))
+	(nfa-make
+		(union-set (nfa-states n1) (nfa-states n2))
+		(union-set (nfa-alphabet n1) (nfa-alphabet n2))
+		(union-set (union-set (nfa-transition n1) (nfa-transition n2))
+		           (create-concatenate-trans))
+		(nfa-start n1)
+		(nfa-finish n2)))

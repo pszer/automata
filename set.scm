@@ -25,6 +25,15 @@
 			(is-subset?  (cdr sub) set)
 			#f)))
 
+(define (equal-set? a b)
+	(define (iter set)
+		(cond ((null? set) #t)
+		      ((is-element? (car set) b) (iter (cdr set)))
+		      (else #f)))
+	(if (= (length a) (length b))
+		(iter a)
+		#f))
+
 (define (element-of-set? x set)
 	(cond
 		((null?  set) #f)
