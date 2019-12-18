@@ -178,8 +178,13 @@
 	(compute automata (list (nfa-start automata)) string))
 
 
-;;; Doesn't work if n1 and n2 have states
-;;; that are the same.
+;;; (nfa-concatenate n1 n2)
+;;; 'Concatenates' automata n1 and n2.
+;;; i.e. L(nfa-concatenate n1 n2) = L(n1) * L(n2)
+;;; Where L(n) is the language of 'n'.
+;;;
+;;; Doesn't work if n1 and n2 have states that are the same.
+;;;
 (define (nfa-concatenate n1 n2)
 	(define (create-concatenate-trans)
 		(define (iter finish result)
@@ -198,3 +203,36 @@
 		           (create-concatenate-trans))
 		(nfa-start n1)
 		(nfa-finish n2)))
+
+;;; (nfa-union n1 n2)
+;;; Creates a 'union' of n1 n2
+;;; i.e. L(nfa-union  n1 n2) = L(n1) ∪ L(n2)
+;;; Where L(n) is the language of 'n'.
+;;;
+;;; Doesn't work if n1 and n2 have states that are the same.
+;;;
+(define (nfa-union n1 n2)
+	(nfa-make
+		(adjoin-set 'union-start (union-set (nfa-states n1) (nfa-states n2)))
+		(union-set (nfa-alphabet n1) (nfa-alphabet n2))
+		(union-set (union-set (nfa-transition n1) (nfa-transition n2))
+		           (list (trans-make 'union-start 'empty (nfa-start n1))
+		                 (trans-make 'union-start 'empty (nfa-start n2))))
+		'union-start
+		(union-set (nfa-finish n1) (nfa-finish n2))))
+
+;;; (nfa-star n)
+;;; Apply's the Kleen star operation on n.
+;;; i.e L(nfa-star n) = L(n)*
+;;;
+(define (nfa-star n)
+	(nfa-make
+		(adjoin-set 'star-start (nfa-states n))
+		(nfa-alphabet n)
+		(append (nfa-transition n) ; n transitions
+		        (list (trans-make 'star-start 'empty (nfa-start n))) ; start empty string transition
+		        (map (lambda (f)
+		                     (trans-make f 'empty (nfa-start n)))
+		             (nfa-finish n))) ; finish back to start transitions
+		'star-start
+		(adjoin-set 'star-start (nfa-finish n))))

@@ -27,7 +27,8 @@
 ;;; of a given alphabet.
 ;;; i.e. automata for regular expression  Σ*'sub'Σ* .
 ;;; It is analogous to substring-dfa in "DFA-examples.scm", but
-;;; the simplicity of this NFA compared to it's DFA is obvious.
+;;; the simplicity of this NFA compared to it's DFA is obvious,
+;;; especially for a very long substring.
 (define (substring-nfa alphabet sub)
 	(define (make-interval a b)
 		(if (> a b)
