@@ -43,9 +43,8 @@
 		(if (= i n)
 			result
 			(trans (+ i 1) 
-			(append (list (trans-make i 0 (remainder (* 2 i) n))
-				          (trans-make i 1 (remainder (+ (* 2 i) 1) n)))
-				    result))))
+			(cons (trans-make i 0 (remainder (* 2 i) n))
+				  (cons (trans-make i 1 (remainder (+ (* 2 i) 1) n)) result)))))
 	(define (make-interval a b)
 		(if (> a b)
 			'()
